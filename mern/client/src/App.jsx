@@ -1,60 +1,72 @@
 import React, { useState } from 'react';
 import './App.css';
 import CameraComponent from './components/Camera';
+import icon from '../public/vite.svg';
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('Usuario'); // Nombre de usuario
 
-  // Manejar la carga de imágenes desde el input
   const handleImageUpload = (event) => {
     setSelectedImage(URL.createObjectURL(event.target.files[0]));
   };
 
-  // Procesar la imagen (puedes agregar la lógica aquí)
   const handleImageProcess = () => {
     alert("La imagen ha sido enviada para su análisis.");
   };
 
-  // Mostrar u ocultar la cámara
   const toggleCamera = () => {
     setShowCamera((prev) => !prev);
   };
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setUsername('Peter'); // Cambia esto al nombre que desees
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setSelectedImage(null);
+    setShowCamera(false);
+  };
+
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>ServiceDeskai</h1>
-        <p>Sube una imagen para poder procesarla <br></br>Geolocalizar y reportar</p>
+      <header className={`app-header ${isLoggedIn ? 'logged-in' : 'logged-out'}`}>
+        <div className="header-content">
+          <img src={icon} alt="Icono" className="app-icon" />
+          <h1 className="app-title">{isLoggedIn ? "ServiceDeskai" : "ServiceDeskai"}</h1>
+        </div>
+        {isLoggedIn && (
+          <div className="user-info">
+            <span className="user">{username}</span>
+            <button onClick={handleLogout} className="logout-button">Desloguear</button>
+          </div>
+        )}
       </header>
 
-      <div className="upload-section">
-        {/* Sección para subir la imagen desde el input */}
-        <div className="image-upload">
-          <label className="custom-file-upload">
-            <input className="file-input" type="file" accept="image/*" onChange={handleImageUpload} />
-            Subir Imagen
-          </label>
-          {selectedImage && (
-            <div className="image-preview">
-              <img src={selectedImage} alt="Preview" />
-            </div>
-          )}
+      {!isLoggedIn ? (
+        <div className="login-section">
+          <button onClick={handleLogin}>Iniciar Sesión</button>
         </div>
+      ) : (
+        <div className="upload-section">
+          <div className="image-upload">
+            {selectedImage && (
+              <div className="image-preview">
+                <img src={selectedImage} alt="Preview" />
+              </div>
+            )}
+          </div>
+          <button onClick={toggleCamera} className="camera-button btn">
+            {showCamera ? "Cerrar Cámara" : "Abrir Cámara"}
+          </button>
 
-        {/* Botón para procesar la imagen */}
-        <button onClick={handleImageProcess} className="process-button">
-          Procesar Imagen
-        </button>
-
-        {/* Botón para activar la cámara */}
-        <button onClick={toggleCamera} className="camera-button btn">
-          {showCamera ? "Cerrar Cámara" : "Abrir Cámara"}
-        </button>
-
-        {/* Mostrar el componente de la cámara cuando el estado 'showCamera' sea verdadero */}
-        {showCamera && <CameraComponent />}
-      </div>
+          {showCamera && <CameraComponent />}
+        </div>
+      )}
 
       <footer className="app-footer">
         <p>Alcarden 2024</p>

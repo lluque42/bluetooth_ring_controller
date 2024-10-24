@@ -6,31 +6,122 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
+	height: auto;
   }
   
   .app {
 	text-align: center;
 	padding: 20px;
 	width: 90%;
-	max-width: 600px;
+	max-width: auto;
 	background: white;
 	border-radius: 25px;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
   
-  .app-header {
-	border-radius: 25px 25px 0 0;
-	background-color: #121bca;
-	padding: 20px;
-	color: white;
+  .app-icon {
+	width: 50px; /* Ajusta este valor para el tamaño deseado */
+	height: auto; /* Mantiene la proporción del SVG */
+	margin-right: 8px; /* Espacio entre el icono y el texto */
+	vertical-align: middle; /* Alinear verticalmente con el texto */
   }
+  
+  .header-content {
+	display: flex;
+	flex-direction: column; /* Coloca el título debajo del icono */
+	align-items: center; /* Centra el contenido */
+  }
+  
+  .app-title {
+	margin-top: 5px; /* Espacio entre el icono y el título */
+	font-size: auto;
+	display: block;
+  }
+  
+  .app-header.logged-in .app-title {
+	font-size: 0.5em; /* Tamaño más pequeño para el estado logueado */
+	
+  }
+  .app-header {
+	display: flex;
+	justify-content: center; /* Espacio entre el título y la información del usuario */
+	align-items: center; /* Centrar verticalmente */
+	border-radius: 25px 25px 25px 25px;
+	background-color: #0a2ac7;
+	color: #fff;
+	padding: 10px 30px; /* Espaciado alrededor */
+  }
+
   
   .app-header h1 {
-	font-size: 2.5em;
-	margin: 0;
+	font-size: 3.5em; /* Tamaño reducido para el título */
+	margin: 0; /* Eliminar margen para un mejor alineamiento */
   }
   
+  .app-header.logged-in h1 {
+	font-size: 0.5em; /* Título más pequeño cuando está logueado */
+  }
+  
+  .app-header.logged-out h1 {
+	font-size: 1.5em; /* Título más grande cuando no está logueado */
+  }
+
+  .user-info {
+	flex-direction: column; /* Organiza el contenido en columna */
+  	align-items: flex-start;
+  }
+
+  .user-info span {
+	margin-bottom: 5px; /* Espacio entre el nombre y el botón */
+  }
+  
+  /* .logout-button {
+	width: 130px;
+	height: 40px;
+	line-height: 42px;
+	padding: 0;
+	border-radius: 25px;
+	border: none;
+	background: rgb(255,27,0);
+  background: linear-gradient(0deg, rgba(255,27,0,1) 0%, rgba(251,75,2,1) 100%);
+  }
+  .logout-button:hover {
+	color: #f0094a;
+	background: transparent;
+	 box-shadow:none;
+  }
+  .logout-button:before,
+  .logout-button:after{
+	content:'';
+	position:absolute;
+	top:0;
+	right:0;
+	height:2px;
+	width:0;
+	background: #f0094a;
+	box-shadow:
+	 -1px -1px 5px 0px #fff,
+	 7px 7px 20px 0px #0003,
+	 4px 4px 5px 0px #0002;
+	transition:400ms ease all;
+  }
+  .logout-button:after{
+	right:inherit;
+	top:inherit;
+	left:0;
+	bottom:0; 
+  }
+  .logout-button:hover:before,
+  .logout-button:hover:after{
+	width:100%;
+	transition:800ms ease all;
+  }*/
+  
+  .logout-button {
+	background-color: red;
+	color: white;
+  }
+
   .upload-section {
 	margin: 20px auto;
 	padding: 20px;
@@ -117,7 +208,7 @@ body {
 	.app-header h1 {
 	  font-size: 2em;
 	}
-	
+  
 	.process-button,
 	.action-button {
 	  width: 100%;
@@ -127,9 +218,9 @@ body {
 	  width: 100%;
 	}
   }
-
+  
   /* -------- botones -------- */
-
+  
   .btn {
 	display: inline-block;
 	padding: 10px 20px 10px 20px;
@@ -142,7 +233,7 @@ body {
 	font-size: 1.1em;
 	transition: background 0.3s;
   }
-
+  
   .custom-btn {
 	width: 130px;
 	height: 40px;
@@ -157,21 +248,19 @@ body {
 	transition: all 0.3s ease;
 	position: relative;
 	display: inline-block;
-	 box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-	 7px 7px 20px 0px rgba(0,0,0,.1),
-	 4px 4px 5px 0px rgba(0,0,0,.1);
-	outline: none;
+	box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
+	  7px 7px 20px 0px rgba(0, 0, 0, .1),
+	  4px 4px 5px 0px rgba(0, 0, 0, .1);
   }
   
   /* 1 */
   .btn-1 {
 	background: #007BFF;
-	background: linear-gradient(0deg, rgba(12,25,180,1) 0%, #007BFF 100%);
-	border: none;
-  }
-  .btn-1:hover {
-	 background: #007BFF;
-  background: linear-gradient(0deg, rgba(2,126,251,1) 0%, rgba(0,3,255,1) 100%);
+	background: linear-gradient(0deg, rgba(12, 25, 180, 1) 0%, #007BFF 100%);
   }
   
+  .btn-1:hover {
+	background: #007BFF;
+	background: linear-gradient(0deg, rgba(2, 126, 251, 1) 0%, rgba(0, 3, 255, 1) 100%);
+  }
   
