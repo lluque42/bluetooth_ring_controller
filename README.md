@@ -1,6 +1,8 @@
 # mern-stack-example
 Mern Stack code for the [Mern Tutorial](https://www.mongodb.com/languages/mern-stack-tutorial)
 
+# En el enlace de Vercel service-deskai-42-malaga.vercel.app hay un error en el Deploy por lo que la conexión con la API que devuelve una descripción de la foto solo funciona en local.
+
 [![CI](https://github.com/mongodb-developer/mern-stack-example/actions/workflows/main.yaml/badge.svg)](https://github.com/mongodb-developer/mern-stack-example/actions/workflows/main.yaml)
 
 ## How To Run
