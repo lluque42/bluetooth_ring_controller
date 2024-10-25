@@ -7,9 +7,9 @@ body {
 	justify-content: center;
 	align-items: center;
 	height: auto;
-  }
-  
-  .app {
+}
+
+.app {
 	text-align: center;
 	padding: 20px;
 	width: 90%;
@@ -17,128 +17,108 @@ body {
 	background: white;
 	border-radius: 25px;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .app-icon {
+}
+
+.app-icon {
 	justify-content: center;
 	width: 50px; /* Ajusta este valor para el tamaño deseado */
 	height: auto; /* Mantiene la proporción del SVG */
 	vertical-align: middle; /* Alinear verticalmente con el texto */
-  }
-  
-  .header-content {
+}
+
+.header-content {
 	display: flex;
-	justify-content: left;
+	justify-content: center;
 	flex-direction: column; /* Coloca el título debajo del icono */
 	align-items: center; /* Centra el contenido */
-  }
-  
-  .app-title {
+}
+
+.app-title {
 	margin-top: 5px; /* Espacio entre el icono y el título */
 	font-size: auto;
 	display: block;
-  }
-  
-  .app-header.logged-in .app-title {
-	font-size: 0.5em; /* Tamaño más pequeño para el estado logueado */
-	
-	
-  }
-  .app-header {
+}
+
+.app-header {
 	display: flex;
 	justify-content: center; /* Espacio entre el título y la información del usuario */
 	align-items: center; /* Centrar verticalmente */
-	border-radius: 25px 25px 25px 25px;
-	background-color: #0a2ac7;
+	border-radius: 25px;
+	background-color: #0a2ac7; /* Color de fondo por defecto */
 	color: #fff;
 	padding: 10px 30px; /* Espaciado alrededor */
-  }
+	transition: background-color 0.3s ease; /* Transición suave */
+}
 
-  
-  .app-header h1 {
+.app-header.logged-in {
+	display: flex;
+	justify-content: space-evenly; /* Espacio entre el título y la información del usuario */
+	align-items: center; /* Centrar verticalmente */
+	background-color: #0a2ac7; /* Verde para logueado */
+}
+
+.app-header.logged-out {
+	background-color: #0a2ac7; /* Rojo para deslogueado */
+}
+
+.app-header h1 {
 	font-size: 3.5em; /* Tamaño reducido para el título */
 	margin: 0; /* Eliminar margen para un mejor alineamiento */
-  }
-  
-  .app-header.logged-in h1 {
+}
+
+.app-header.logged-in h1 {
 	font-size: 0.5em; /* Título más pequeño cuando está logueado */
-  }
-  
-  .app-header.logged-out h1 {
+}
+
+.app-header.logged-out h1 {
 	font-size: 1.5em; /* Título más grande cuando no está logueado */
-  }
+}
 
-  .user {
-	margin: 0 10px 0 10px;
-  }
-
-  .user-info {
-	flex-direction: column; /* Organiza el contenido en columna */
-  	align-items: flex-start;
-  }
-
-  .user-info span {
-	margin-bottom: 5px; /* Espacio entre el nombre y el botón */
+.login-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 20px 0;
   }
   
-  /* .logout-button {
-	width: 130px;
-	height: 40px;
-	line-height: 42px;
-	padding: 0;
+  .login-input {
+	margin: 10px 0;
+	padding: 10px;
 	border-radius: 25px;
-	border: none;
-	background: rgb(255,27,0);
-  background: linear-gradient(0deg, rgba(255,27,0,1) 0%, rgba(251,75,2,1) 100%);
+	border: 1px solid #ccc;
+	width: 200px; /* Ajusta el ancho según tus necesidades */
   }
-  .logout-button:hover {
-	color: #f0094a;
-	background: transparent;
-	 box-shadow:none;
-  }
-  .logout-button:before,
-  .logout-button:after{
-	content:'';
-	position:absolute;
-	top:0;
-	right:0;
-	height:2px;
-	width:0;
-	background: #f0094a;
-	box-shadow:
-	 -1px -1px 5px 0px #fff,
-	 7px 7px 20px 0px #0003,
-	 4px 4px 5px 0px #0002;
-	transition:400ms ease all;
-  }
-  .logout-button:after{
-	right:inherit;
-	top:inherit;
-	left:0;
-	bottom:0; 
-  }
-  .logout-button:hover:before,
-  .logout-button:hover:after{
-	width:100%;
-	transition:800ms ease all;
-  }*/
-  
-  .logout-button {
-	background-color: red;
+
+.user {
+	margin: 0 10px;
+}
+
+.user-info {
+	flex-direction: column; /* Organiza el contenido en columna */
+	align-items: flex-start;
+}
+
+.user-info span {
+	margin-bottom: 5px; /* Espacio entre el nombre y el botón */
+}
+
+.logout-button {
+	background-color: red; /* Mantener color original */
 	color: white;
 	border-radius: 25px;
 	height: auto;
 	font-size: 0.7em;
 	padding: 5px;
 	margin-left: 10px;
-	transition: all 0.3 ease;
-  }
+	margin-right: 10px;
+	transition: all 0.3s ease;
+}
 
-  .logout-button:hover {
+.logout-button:hover {
 	transform: scale(1.05);
-  }
+}
 
-  .upload-section {
+.upload-section {
 	margin: 20px auto;
 	padding: 20px;
 	border: 2px dashed #ccc;
@@ -148,31 +128,31 @@ body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-  }
-  
-  .upload-section input[type="file"] {
+}
+
+.upload-section input[type="file"] {
 	margin: 10px 0;
-  }
-  
-  .image-preview {
+}
+
+.image-preview {
 	width: 100%;
 	max-width: 400px;
 	margin: 20px 0;
 	border-radius: 25px;
 	overflow: hidden;
-  }
-  
-  .image-preview img {
+}
+
+.image-preview img {
 	max-width: 100%;
 	border-radius: 25px;
 	transition: transform 0.3s;
-  }
-  
-  .image-preview img:hover {
+}
+
+.image-preview img:hover {
 	transform: scale(1.05);
-  }
-  
-  .custom-file-upload {
+}
+
+.custom-file-upload {
 	display: inline-block;
 	padding: 10px 20px;
 	cursor: pointer;
@@ -180,18 +160,18 @@ body {
 	color: white;
 	border-radius: 25px;
 	transition: background 0.3s;
-  }
-  
-  .custom-file-upload:hover {
+}
+
+.custom-file-upload:hover {
 	background-color: #0056b3;
-  }
-  
-  .file-input {
+}
+
+.file-input {
 	display: none;
-  }
-  
-  .process-button,
-  .action-button {
+}
+
+.process-button,
+.action-button {
 	padding: 10px 20px;
 	background-color: #28a745;
 	color: white;
@@ -201,46 +181,46 @@ body {
 	font-size: 1.1em;
 	margin: 10px 0;
 	transition: background 0.3s;
-  }
-  
-  .process-button:hover,
-  .action-button:hover {
+}
+
+.process-button:hover,
+.action-button:hover {
 	background-color: #218838;
-  }
-  
-  .error-message {
+}
+
+.error-message {
 	color: red;
 	margin-top: 10px;
-  }
-  
-  .app-footer {
+}
+
+.app-footer {
 	margin-top: 20px;
 	font-size: 0.9em;
 	color: #555;
-  }
-  
-  /* Responsive styles */
-  @media (max-width: 600px) {
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
 	.app-header h1 {
-	  font-size: 2em;
+		font-size: 2em;
 	}
-  
+
 	.process-button,
 	.action-button {
-	  width: 100%;
+		width: 100%;
 	}
-  
+
 	.custom-file-upload {
-	  width: 100%;
+		width: 100%;
 	}
-  }
-  
-  /* -------- botones -------- */
-  
-  .btn {
+}
+
+/* -------- botones -------- */
+
+.btn {
 	display: inline-block;
-	padding: 10px 20px 10px 20px;
-	margin: 5px 10px 5px 10px;
+	padding: 10px 20px;
+	margin: 5px 10px;
 	background-color: #007BFF;
 	color: #fff;
 	border: auto;
@@ -248,9 +228,9 @@ body {
 	cursor: pointer;
 	font-size: 1.1em;
 	transition: background 0.3s;
-  }
-  
-  .custom-btn {
+}
+
+.custom-btn {
 	width: 130px;
 	height: 40px;
 	color: #fff;
@@ -265,18 +245,17 @@ body {
 	position: relative;
 	display: inline-block;
 	box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
-	  7px 7px 20px 0px rgba(0, 0, 0, .1),
-	  4px 4px 5px 0px rgba(0, 0, 0, .1);
-  }
-  
-  /* 1 */
-  .btn-1 {
+		7px 7px 20px 0px rgba(0, 0, 0, .1),
+		4px 4px 5px 0px rgba(0, 0, 0, .1);
+}
+
+/* 1 */
+.btn-1 {
 	background: #007BFF;
 	background: linear-gradient(0deg, rgba(12, 25, 180, 1) 0%, #007BFF 100%);
-  }
-  
-  .btn-1:hover {
+}
+
+.btn-1:hover {
 	background: #007BFF;
 	background: linear-gradient(0deg, rgba(2, 126, 251, 1) 0%, rgba(0, 3, 255, 1) 100%);
-  }
-  
+}

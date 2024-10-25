@@ -7,7 +7,9 @@ function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('Usuario'); // Nombre de usuario
+  const [username, setUsername] = useState('Usuario');
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
   const handleImageUpload = (event) => {
     setSelectedImage(URL.createObjectURL(event.target.files[0]));
@@ -23,13 +25,15 @@ function App() {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setUsername('Peter'); // Cambia esto al nombre que desees
+    setUsername(loginUsername); // Establecer el nombre de usuario ingresado
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setSelectedImage(null);
     setShowCamera(false);
+    setLoginUsername(''); // Limpiar el campo de nombre de usuario al desloguear
+    setLoginPassword(''); // Limpiar el campo de contraseña al desloguear
   };
 
   return (
@@ -39,16 +43,35 @@ function App() {
           <img src={icon} alt="Icono" className="app-icon" />
           <h1 className="app-title">{isLoggedIn ? "ServiceDeskai" : "ServiceDeskai"}</h1>
         </div>
-        {isLoggedIn && (
-          <div className="user-info">
-            <span className="user">{username}</span>
-            <button onClick={handleLogout} className="logout-button">Desloguear</button>
-          </div>
-        )}
+        {isLoggedIn ? (
+        <div className="user">
+          <span >{username}</span>
+        </div>
+        ) : null}
+        {isLoggedIn ? (
+         <div className="user-info">
+           <button onClick={handleLogout} className="logout-button">Desloguear</button>
+         </div>
+        ) : null}
+        
       </header>
 
       {!isLoggedIn ? (
         <div className="login-section">
+          <input 
+            type="text" 
+            placeholder="Nombre de usuario" 
+            value={loginUsername}
+            onChange={(e) => setLoginUsername(e.target.value)} 
+            className="login-input"
+          />
+          <input 
+            type="password" 
+            placeholder="Contraseña" 
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)} 
+            className="login-input"
+          />
           <button onClick={handleLogin} className="login-button btn">Iniciar Sesión</button>
         </div>
       ) : (
@@ -63,7 +86,6 @@ function App() {
           <button onClick={toggleCamera} className="camera-button btn">
             {showCamera ? "Cerrar Cámara" : "Abrir Cámara"}
           </button>
-
           {showCamera && <CameraComponent />}
         </div>
       )}
