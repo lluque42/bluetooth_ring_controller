@@ -33,28 +33,25 @@ const CameraComponent = () => {
 
   // Function to communicate with the API and get the text prompt
   const handleSubmit = async () => {
-    if (imageData && !loading) {  // Prevent multiple submissions
-      setLoading(true);  // Disable button while request is in progress
-
+    if (imageData && !loading) {
+      setLoading(true);
+  
       try {
-        // Use the Vite proxy path to avoid CORS issues
-        const response = await fetch("/api/interrogator/prompt", {
+        const response = await fetch("/api/generate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            image: imageData, // The base64-encoded image
-            clip_model_name: "ViT-L-14/openai", // Specify the CLIP model
-            mode: "fast" // Use the "fast" mode for quicker results
+            image: imageData,
+            clip_model_name: "ViT-L-14/openai",
+            mode: "fast"
           }),
         });
-
-        // Handle the API response
+  
         const result = await response.json();
         console.log("Response from API: ", result);
-
-        // Assuming the result contains the prompt, store it in the state
+  
         if (result && result.prompt) {
           setPrompt(result.prompt); // Update the state with the generated prompt
         } else {
@@ -63,7 +60,7 @@ const CameraComponent = () => {
       } catch (error) {
         console.error("Error communicating with the API: ", error);
       } finally {
-        setLoading(false);  // Re-enable the button after response or error
+        setLoading(false); 
       }
     }
   };
