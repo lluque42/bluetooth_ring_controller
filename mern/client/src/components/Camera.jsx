@@ -37,7 +37,7 @@ const CameraComponent = () => {
       setLoading(true);
   
       try {
-        const response = await fetch("/api/generate", {
+        const response = await fetch("/src/api/generate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
