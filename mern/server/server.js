@@ -1,27 +1,33 @@
 import express from "express";
 import cors from "cors";
+import mongoose from "mongoose";
 import records from "./routes/record.js";
+import dotenv from 'dotenv';
 
-const PORT = process.env.PORT || 5050;
+// Cargar las variables de entorno desde el archivo config.env
+dotenv.config({ path: 'config.env' });
+
+// Usar la URI de MongoDB desde las variables de entorno
+const MONGO_URI = process.env.MONGO_URI || process.env.ATLAS_URI;
+
+console.log("Intentando conectar a MongoDB con la URI:", MONGO_URI); // Agrega esta línea para depuración
+
+if (!MONGO_URI) {
+  console.error("Error: MONGO_URI no está definida en el archivo de configuración.");
+  process.exit(1);  // Salir del proceso si no está definida la URI
+}
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch((error) => console.error('Error conectando a MongoDB:', error));
+
 const app = express();
 
 app.use(cors());
-app.use(express.json());
-app.use("/record", records);
-
-const express = require("express");
-const mongoose = require("mongoose");
-const fs = require("fs");
-const path = require("path");
-
-// Middleware para procesar JSON
 app.use(express.json({ limit: '50mb' }));
-
-// Conectar a MongoDB (puedes cambiar la conexión según tu configuración)
-mongoose.connect('mongodb://localhost:27017/cameraApp', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 // Esquema de Mongoose para almacenar las imágenes
 const imageSchema = new mongoose.Schema({
@@ -54,7 +60,11 @@ app.post("/api/upload", async (req, res) => {
   }
 });
 
-// start the Express server
+// Middleware para procesar JSON
+app.use("/record", records);
+
+// Iniciar el servidor
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

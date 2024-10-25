@@ -49,7 +49,7 @@ function App() {
 
       {!isLoggedIn ? (
         <div className="login-section">
-          <button onClick={handleLogin}>Iniciar Sesión</button>
+          <button onClick={handleLogin} className="login-button btn">Iniciar Sesión</button>
         </div>
       ) : (
         <div className="upload-section">

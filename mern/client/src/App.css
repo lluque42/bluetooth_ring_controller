@@ -20,14 +20,15 @@ body {
   }
   
   .app-icon {
+	justify-content: center;
 	width: 50px; /* Ajusta este valor para el tamaño deseado */
 	height: auto; /* Mantiene la proporción del SVG */
-	margin-right: 8px; /* Espacio entre el icono y el texto */
 	vertical-align: middle; /* Alinear verticalmente con el texto */
   }
   
   .header-content {
 	display: flex;
+	justify-content: left;
 	flex-direction: column; /* Coloca el título debajo del icono */
 	align-items: center; /* Centra el contenido */
   }
@@ -40,6 +41,7 @@ body {
   
   .app-header.logged-in .app-title {
 	font-size: 0.5em; /* Tamaño más pequeño para el estado logueado */
+	
 	
   }
   .app-header {
@@ -64,6 +66,10 @@ body {
   
   .app-header.logged-out h1 {
 	font-size: 1.5em; /* Título más grande cuando no está logueado */
+  }
+
+  .user {
+	margin: 0 10px 0 10px;
   }
 
   .user-info {
@@ -120,6 +126,16 @@ body {
   .logout-button {
 	background-color: red;
 	color: white;
+	border-radius: 25px;
+	height: auto;
+	font-size: 0.7em;
+	padding: 5px;
+	margin-left: 10px;
+	transition: all 0.3 ease;
+  }
+
+  .logout-button:hover {
+	transform: scale(1.05);
   }
 
   .upload-section {
