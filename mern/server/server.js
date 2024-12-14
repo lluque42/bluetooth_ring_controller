@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import records from "./routes/record.js";
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Cargar las variables de entorno desde el archivo config.env
 dotenv.config({ path: 'config.env' });
@@ -62,6 +63,15 @@ app.post("/api/upload", async (req, res) => {
 
 // Middleware para procesar JSON
 app.use("/record", records);
+
+// Servir archivos estáticos del cliente
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'mern/client/dist')));
+
+// Definir una ruta para la raíz
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'mern/client/dist', 'index.html'));
+});
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5050;
