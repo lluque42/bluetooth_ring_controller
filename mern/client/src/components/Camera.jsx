@@ -1,13 +1,13 @@
-import React, { useRef, useState, useEffect, intervalId, isCapturing } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 const CameraComponent = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageData, setImageData] = useState(null);
-  const [prompt, setIsCapturing] = useState(false); // State to store the generated prompt
-  const [loading, setIntervalId] = useState(false); // State to track if the request is in progress
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [detections, setDetections] = useState([]);
 
-  // Function to request camera permissions and show the video on screen
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -20,14 +20,12 @@ const CameraComponent = () => {
     }
   };
 
-  // Function to capture the image from the video
   const capturePhoto = () => {
     const context = canvasRef.current.getContext("2d");
     canvasRef.current.width = videoRef.current.videoWidth;
     canvasRef.current.height = videoRef.current.videoHeight;
     context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    
-    const image = canvasRef.current.toDataURL("image/png"); // Save the image as base64
+    const image = canvasRef.current.toDataURL("image/png");
     setImageData(image);
     savePhoto(image);
   };
@@ -43,19 +41,18 @@ const CameraComponent = () => {
       });
       const result = await response.json();
       console.log("Photo uploaded successfully: ", result);
+      setDetections(result.detections);
     } catch (error) {
       console.error("Error uploading the image: ", error);
     }
   };
 
-// Function to start capturing photos every 5 seconds
   const startCapturing = () => {
     setIsCapturing(true);
     const id = setInterval(capturePhoto, 5000);
     setIntervalId(id);
   };
 
-  // Function to stop capturing photos
   const stopCapturing = () => {
     setIsCapturing(false);
     clearInterval(intervalId);
@@ -70,40 +67,6 @@ const CameraComponent = () => {
     };
   }, [intervalId]);
 
-  //// Function to communicate with the API and get the text prompt
-  //const handleSubmit = async () => {
-  //  if (imageData && !loading) {
-  //    setLoading(true);
-  
-  //    try {
-  //      const response = await fetch("/api/generate", {
-  //        method: "POST",
-  //        headers: {
-  //          "Content-Type": "application/json",
-  //        },
-  //        body: JSON.stringify({
-  //          image: imageData,
-  //          clip_model_name: "ViT-L-14/openai",
-  //          mode: "fast"
-  //        }),
-  //      });
-  
-  //      const result = await response.json();
-  //      console.log("Response from API: ", result);
-  
-  //      if (result && result.prompt) {
-  //        setPrompt(result.prompt); // Update the state with the generated prompt
-  //      } else {
-  //        console.log("No prompt returned in the response");
-  //      }
-  //    } catch (error) {
-  //      console.error("Error communicating with the API: ", error);
-  //    } finally {
-  //      setLoading(false); 
-  //    }
-  //  }
-  //};
-
   return (
     <div>
       <video ref={videoRef} style={{ width: "100%" }}></video>
@@ -113,6 +76,18 @@ const CameraComponent = () => {
       </button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
       {imageData && <img src={imageData} alt="captured" style={{ width: "100%" }} />}
+      {detections.length > 0 && (
+        <div>
+          <h3>Detections:</h3>
+          <ul>
+            {detections.map((detection, index) => (
+              <li key={index}>
+                {detection.label} with confidence {detection.score} at location {detection.box.join(", ")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
