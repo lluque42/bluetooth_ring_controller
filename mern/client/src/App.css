@@ -85,7 +85,7 @@ body {
 	margin: 10px 0;
 	padding: 10px;
 	border-radius: 25px;
-	border: 1px solid #ccc;
+	border: 0.5px solid #ccc;
 	width: 200px; /* Ajusta el ancho según tus necesidades */
   }
 
@@ -236,6 +236,7 @@ body {
 	color: #fff;
 	border-radius: 25px;
 	padding: 10px;
+	margin: 0.5rem;
 	font-family: 'Merriweather', sans-serif;
 	font-weight: bold;
 	font-size: 12px;

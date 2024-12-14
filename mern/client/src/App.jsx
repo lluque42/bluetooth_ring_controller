@@ -42,7 +42,7 @@ function App() {
       <header className={`app-header ${isLoggedIn ? 'logged-in' : 'logged-out'}`}>
         <div className="header-content">
           <img src={icon} alt="Icono" className="app-icon" />
-          <h1 className="app-title">{isLoggedIn ? "ServiceDeskai" : "ServiceDeskai"}</h1>
+          <h1 className="app-title">{isLoggedIn ? "Ornamentech" : "Ornamentech"}</h1>
         </div>
         {isLoggedIn ? (
         <div className="user">
@@ -92,7 +92,7 @@ function App() {
       )}
 
       <footer className="app-footer">
-        <p>Alcarden 2024</p>
+        <p>Ornamentech 2024</p>
       </footer>
     </div>
   );

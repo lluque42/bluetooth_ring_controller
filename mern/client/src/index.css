@@ -1,6 +1,6 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
 .images-container {
   display: flex;
@@ -17,7 +17,7 @@
 .image-box {
   flex: 1;
   min-width: 300px;
-  border: 1px solid #ccc;
+  border: 0.5px solid #ccc;
   padding: 10px;
   border-radius: 5px;
   position: relative;
@@ -129,4 +129,13 @@
   transform: translate(-50%, -50%);
   z-index: 100;
   transition: all 0.3s ease;
+}
+
+.custom-btn.connected {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.custom-btn.connected:hover {
+  background-color: #45a049;
 }

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { bluetoothService } from '../services/bluetooth';
 
 const CameraComponent = () => {
   const videoRef = useRef(null);
@@ -14,6 +15,8 @@ const CameraComponent = () => {
   const [highlightedDetection, setHighlightedDetection] = useState(null);
   const [showCursor, setShowCursor] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isBluetoothConnected, setIsBluetoothConnected] = useState(false);
+  const SCORE_THRESHOLD = 0.7; // Añadir constante para el umbral
 
   const startCamera = async () => {
     try {
@@ -60,10 +63,13 @@ const CameraComponent = () => {
       console.log("Resultado completo:", result);
 
       if (result.success && result.detections) {
-        // Asegurarnos de que tenemos un array de detecciones
-        const detectionArray = Array.isArray(result.detections) ? result.detections : [result.detections];
-        console.log("Detecciones procesadas:", detectionArray);
-        setDetections(detectionArray);
+        // Filtrar detecciones por score
+        const filteredDetections = Array.isArray(result.detections) 
+          ? result.detections.filter(detection => detection.score >= SCORE_THRESHOLD)
+          : [];
+        
+        console.log("Detecciones filtradas (>70%):", filteredDetections);
+        setDetections(filteredDetections);
         setProcessedImage(result.processedImage);
       }
     } catch (error) {
@@ -81,6 +87,23 @@ const CameraComponent = () => {
     setIsCapturing(false);
     clearInterval(intervalId);
     setIntervalId(null);
+  };
+
+  const handleCaptureTrigger = () => {
+    if (!isCapturing) {
+      startCapturing();
+    } else {
+      stopCapturing();
+    }
+  };
+
+  const connectBluetooth = async () => {
+    try {
+      await bluetoothService.connect();
+      setIsBluetoothConnected(true);
+    } catch (error) {
+      console.error('Error al conectar Bluetooth:', error);
+    }
   };
 
   const calculateScale = (image) => {
@@ -148,12 +171,36 @@ const CameraComponent = () => {
     };
   }, [intervalId]);
 
+  useEffect(() => {
+    if (isBluetoothConnected) {
+      const unsubscribe = bluetoothService.subscribe((value) => {
+        if (value === '1') { // O el valor que envíe tu ESP32
+          handleCaptureTrigger();
+        }
+      });
+
+      return () => {
+        unsubscribe();
+        bluetoothService.disconnect();
+      };
+    }
+  }, [isBluetoothConnected]);
+
   return (
     <div>
       <video ref={videoRef} style={{ width: "100%" }}></video>
       <button onClick={startCamera} className="custom-btn btn-1">Activar Cámara</button>
-      <button onClick={startCapturing} className="custom-btn btn-1">
-        lanzar captura
+      <button 
+        onClick={handleCaptureTrigger} 
+        className="custom-btn btn-1"
+      >
+        {isCapturing ? "Detener Captura" : "Iniciar Captura"}
+      </button>
+      <button 
+        onClick={connectBluetooth}
+        className={`custom-btn btn-1 ${isBluetoothConnected ? 'connected' : ''}`}
+      >
+        {isBluetoothConnected ? "BT Conectado" : "Conectar BT"}
       </button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
       
@@ -217,7 +264,7 @@ const CameraComponent = () => {
 
       {Array.isArray(detections) && detections.length > 0 && (
         <div className="detections-box">
-          <h3>Lista de Detecciones:</h3>
+          <h3>Lista de Detecciones Confiables:</h3>
           <ul>
             {detections.map((detection, index) => (
               <li key={index}>
@@ -230,6 +277,11 @@ const CameraComponent = () => {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {Array.isArray(detections) && detections.length === 0 && (
+        <div className="detections-box">
+          <p>No se encontraron objetos con confianza superior al 70%</p>
         </div>
       )}
     </div>
