@@ -58,7 +58,7 @@ body {
 }
 
 .app-header.logged-out {
-	background-color: #0a2ac7; /* Rojo para deslogueado */
+	background-color: lightblue; /* Rojo para deslogueado */
 }
 
 .app-header h1 {
@@ -103,7 +103,7 @@ body {
 }
 
 .logout-button {
-	background-color: red; /* Mantener color original */
+	background-color: blue; /* Mantener color original */
 	color: white;
 	border-radius: 25px;
 	height: auto;
@@ -189,7 +189,7 @@ body {
 }
 
 .error-message {
-	color: red;
+	color: blue;
 	margin-top: 10px;
 }
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import CameraComponent from './components/Camera';
-import icon from '../public/vite.svg';
+// Cambiar la importación del ícono
+import icon from '/vite.svg';  // Importar directamente desde la raíz
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);

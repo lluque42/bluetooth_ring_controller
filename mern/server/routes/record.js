@@ -1,15 +1,19 @@
 import express from "express";
-
-// This will help us connect to the database
-import db from "../db/connection.js";
-
-// This help convert the id from string to ObjectId for the _id.
-import { ObjectId } from "mongodb";
-
-// router is an instance of the express router.
-// We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
+import { MongoClient, ObjectId } from "mongodb";
 const router = express.Router();
+
+// Esta es tu conexión a la base de datos. Asegúrate de que la URI es correcta.
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017";
+const client = new MongoClient(MONGO_URI);
+
+let db;
+try {
+  await client.connect();
+  db = client.db("test"); // Nombre de tu base de datos
+  console.log("Successfully connected to MongoDB.");
+} catch (err) {
+  console.error("Error connecting to MongoDB:", err);
+}
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
