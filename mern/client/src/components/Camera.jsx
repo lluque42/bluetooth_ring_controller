@@ -74,8 +74,7 @@ const CameraComponent = () => {
 
   const startCapturing = () => {
     setIsCapturing(true);
-    const id = setInterval(capturePhoto, 5000);
-    setIntervalId(id);
+    capturePhoto();
   };
 
   const stopCapturing = () => {
@@ -153,8 +152,8 @@ const CameraComponent = () => {
     <div>
       <video ref={videoRef} style={{ width: "100%" }}></video>
       <button onClick={startCamera} className="custom-btn btn-1">Activar Cámara</button>
-      <button onClick={isCapturing ? stopCapturing : startCapturing} className="custom-btn btn-1">
-        {isCapturing ? "Detener Captura" : "Iniciar Captura"}
+      <button onClick={startCapturing} className="custom-btn btn-1">
+        lanzar captura
       </button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
       

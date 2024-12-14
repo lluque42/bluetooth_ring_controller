@@ -51,7 +51,7 @@ function App() {
         ) : null}
         {isLoggedIn ? (
          <div className="user-info">
-           <button onClick={handleLogout} className="logout-button">Desloguear</button>
+           <button onClick={handleLogout} className="logout-button">Log-out</button>
          </div>
         ) : null}
         
