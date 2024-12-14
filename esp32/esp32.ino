@@ -25,6 +25,17 @@ const int touch_7 = 27;
 const int touch_8 = 33;
 const int touch_9 = 32;
 
+const int serial_speed = 115200;
+const int capacitive_touch_input_number = 8;
+\
+// The delay (ms) in the loop() function that determines
+// the sample frequency of the capacitive touch inputs.
+const int sampling_period = 200;
+
+// Number of samples needed to calculate the baseline
+// for the capacitive touch inputs
+const int baseline_samples = 1000;
+
 long    baseline[] = {0,0,0,0,0,0,0,0};
 /*
 From the Lafvin pdf:
@@ -40,13 +51,15 @@ From the Lafvin pdf:
   T9 (GPIO 32)
 */
 
+// Averages the values for the capacitive touch GPIOs 
+// to obtain a baseline
 void  calc_baseline(long *baseline)
 {
   int           i;
   long          samples;
 
   samples = 0;
-  while (samples < 1000)
+  while (samples < baseline_samples)
   {
     baseline[0] += touchRead(touch_0);
     //baseline[1] += touchRead(touch_1);
@@ -61,7 +74,7 @@ void  calc_baseline(long *baseline)
     samples++;
   }
   i = 0;
-  while (i < 8)
+  while (i < capacitive_touch_input_number)
   {
     baseline[i] /= samples;
     i++;
@@ -69,49 +82,7 @@ void  calc_baseline(long *baseline)
   Serial.println(samples);
 }
 
-// Runs once at power on
-void setup() {
-  // Serial communication speed
-  Serial.begin(115200);
-
-  //print_touch_read();  
-  // A delay for the serial monitor for debugging purposes
-  //delay(5000);
-  //calc_baseline(baseline);
-
-  calc_baseline(baseline);
-  Serial.println("Ring on line!!!");
-
-  // initialize the pushbutton pin as an input
-  //pinMode(buttonPin, INPUT);
-  // initialize the LED pin as an output
-  //pinMode(ledPin, OUTPUT);
-}
-/*
-void  print_touch_read(void)
-{
-  Serial.print("Touch_0: ");
-  Serial.println(touchRead(touch_0));
-  Serial.print("Touch_1: ");
-  Serial.println(touchRead(touch_1));
-  Serial.print("Touch_2: ");
-  Serial.println(touchRead(touch_2));
-  Serial.print("Touch_3: ");
-  Serial.println(touchRead(touch_3));
-  Serial.print("Touch_4: ");
-  Serial.println(touchRead(touch_4));
-  Serial.print("Touch_5: ");
-  Serial.println(touchRead(touch_5));
-  Serial.print("Touch_6: ");
-  Serial.println(touchRead(touch_6));
-  Serial.print("Touch_7: ");
-  Serial.println(touchRead(touch_7));
-  Serial.print("Touch_8: ");
-  Serial.println(touchRead(touch_8));
-  Serial.print("Touch_9: ");
-  Serial.println(touchRead(touch_9));
-}
-*/
+// Initializes an array from the input pin values
 void  get_touch_analog_values(int *values)
 {
   values[0] = touchRead(touch_0);
@@ -126,12 +97,15 @@ void  get_touch_analog_values(int *values)
   values[7] = touchRead(touch_9);
 }
 
+// Signal conditioning from the analog values to 0 or 1 to
+// represent the touch / no-touch condition of each of the
+// capacitive touch GPIO circuits.
 void  get_touch_states(int *values, int *states)
 {
   int i;
 
   i = 0;
-  while (i < 8)
+  while (i < capacitive_touch_input_number)
   {
     if (values[i] < abs(baseline[i] - values[i]))
       states[i] = 1;
@@ -141,65 +115,43 @@ void  get_touch_states(int *values, int *states)
   }
 }
 
-void  print_array(char *label, int *array)
+// Prints an integer array with a label
+void  print_array(char *label, int *array, int number_of_elements)
 {
   int i;
 
   i = 0;
-  while (i < 8)
+  while (i < number_of_elements)
   {
     Serial.print(label);
     Serial.print(i);
     Serial.print(": ");
-    Serial.print(array[i]);
-    Serial.print(" (baseline = ");
-    Serial.println(baseline[i]);
+    Serial.println(array[i]);
+    //Serial.print(" (baseline = ");
+    //Serial.println(baseline[i]);
     i++;
   }
 }
 
-void loop() {
+// The code that will be run once at power on
+void setup()
+{
+  // Serial communication speed
+  Serial.begin(serial_speed);
+  calc_baseline(baseline);
+  Serial.println("Ring on line!!!");
+}
+
+// The code that will be run repeatedly
+void loop()
+{
   int i;
-  int states[8];
-  int values[8];
+  int states[capacitive_touch_input_number];
+  int values[capacitive_touch_input_number];
 
-  //calc_baseline(baseline);
   get_touch_analog_values(values);
-  print_array("value_", values);
+  //print_array("value_", values, capacitive_touch_input_number);
   get_touch_states(values, states);
-  print_array("state_", states);
-  /*
-  i = 0;
-  while (i < 10)
-  {
-    Serial.print("Baseline_");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(baseline[i]);
-    i++;
-  }
-  */
-  
-  
-  // put your main code here, to run repeatedly:
-
-  delay(200);
-
-  return;
-
-  /*
-  // TODO
-  // read the state of the pushbutton value
-  buttonState = digitalRead(buttonPin);
-  Serial.println(buttonState);
-  // check if the pushbutton is pressed.
-  // if it is, the buttonState is HIGH
-  if (buttonState == HIGH) {
-    // turn LED on
-    digitalWrite(ledPin, HIGH);
-  } else {
-    // turn LED off
-    digitalWrite(ledPin, LOW);
-  }
-  */
+  print_array("state_", states, capacitive_touch_input_number);
+  delay(sampling_period);
 }
