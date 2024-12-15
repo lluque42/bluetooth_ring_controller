@@ -281,7 +281,7 @@ const CameraComponent = () => {
       )}
       {Array.isArray(detections) && detections.length === 0 && (
         <div className="detections-box">
-          <p>No se encontraron objetos con confianza superior al 70%</p>
+          <p className="text-center">No se encontraron objetos</p>
         </div>
       )}
     </div>

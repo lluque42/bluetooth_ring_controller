@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import CameraComponent from './components/Camera';
 // Cambiar la importación del ícono
-import icon from '/vite.svg';  // Importar directamente desde la raíz
+import icon from '/logo_o.png';  // Importar directamente desde la raíz
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);
