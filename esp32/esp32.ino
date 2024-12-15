@@ -13,6 +13,24 @@ $ # (and every time it's unplugged/plugged)
 $ sudo chmod a+rw /dev/ttyUSB0
 */
 
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+BLECharacteristic *pCharacteristic;
+
+bool deviceConnected = false;
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+    };
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+    }
+};
+
 // set pin numbers
 const int touch_0 = 4;
 //const int touch_1 = 0;  //Not accessible as a pin
@@ -221,6 +239,27 @@ void  gestureInterpreter(int *states) {
 // The code that will be run once at power on
 void setup()
 {
+  // BT begins
+  Serial.begin(115200);
+  
+  BLEDevice::init("ESP32");
+  BLEServer *pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+  
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+  pCharacteristic = pService->createCharacteristic(
+                     CHARACTERISTIC_UUID,
+                     BLECharacteristic::PROPERTY_READ |
+                     BLECharacteristic::PROPERTY_WRITE |
+                     BLECharacteristic::PROPERTY_NOTIFY
+                   );
+  pCharacteristic->addDescriptor(new BLE2902());
+  pService->start();
+  
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->start();
+  //BT end
   // Serial communication speed
   Serial.begin(serial_speed);
   calc_baseline(baseline);
@@ -237,6 +276,16 @@ void loop()
   get_touch_analog_values(values);
   //print_array("value_", values, capacitive_touch_input_number);
   get_touch_states(values, states);
+
+  // BT code begins
+   if (deviceConnected) {
+    // Cuando quieras enviar una señal de captura
+    uint8_t value = 1;
+    pCharacteristic->setValue(&value, 1);
+    pCharacteristic->notify();
+    delay(1000); // Ajusta según necesites
+  }
+  // BT code ends
  // gestureInterpreter(states);
   print_array("state_", states, capacitive_touch_input_number);
   delay(sampling_period);
