@@ -133,6 +133,91 @@ void  print_array(char *label, int *array, int number_of_elements)
   }
 }
 
+void  getZeros(int *states, int *upperZeros, int *lowerZeros) {
+  int uZeros = 0;
+  int lZeros = 0;
+  int groupFlag = 0;
+
+  int i = 0;
+  while (i < 8) {
+    if (!groupFlag && states[i] == 0)
+      uZeros++;
+    else if (groupFlag && states[i] == 0)
+      lZeros++;
+    else if (groupFlag == 0 && states[i] == 1)
+      groupFlag = 1;
+    i++;
+  }
+}
+
+/**
+* Function that checks if there is a unique isolated group of true states
+* @return  It returns false if there is not an unique group of true states
+*          It return true otherwise
+*/
+int isolatedTrueGroup(int *states) {
+  int isolatedFlag = 0;
+  int prevState = 0;
+
+  int i = 0;
+  while (i < 8) {
+    if (states[i] == 1 && isolatedFlag == 0)
+      isolatedFlag = 1;
+    else if (prevState == 0 && states[i] == 1 && isolatedFlag == 1)
+      return 0;
+    prevState = states[i];
+    i++;
+  }
+  return 1;
+}
+
+void  checkGesture(int prevUpperZeros, int prevLowerZeros, int upperZeros, int lowerZeros)
+{
+  
+}
+
+int falseStates(int *states)
+{
+  int i = 0;
+
+    while (i < 8)
+    {
+      if (states[i] == 0)
+        return 0;
+      i++;
+    }
+    return 1;
+}
+
+void  gestureInterpreter(int *states) {
+  static int  *prePrevStates = 0;
+  static int  *prevStates = 0;
+  static int  prevUpperZeros = 0;
+  static int  prevLowerZeros = 0;
+  int         upperZeros = 0;
+  int         lowerZeros = 0;
+
+  if (!isolatedTrueGroup(states)) {
+    upperZeros = 0;
+    lowerZeros = 0;
+    prevUpperZeros = 0;
+    prevLowerZeros = 0;
+    return ;
+  }
+  if (upperZeros == 0 && lowerZeros == 0) {
+    getZeros(states, &upperZeros, &lowerZeros);
+  }
+  if (falseStates(prePrevStates) && falseStates(states) && isolatedTrueGroup(prevStates))
+  {
+    Serial.println("Click!");
+  }
+  //checkGesture(prevUpperZeros, prevLowerZeros, upperZeros, lowerZeros);
+  prevUpperZeros = upperZeros;
+  prevLowerZeros = lowerZeros;
+  prePrevStates = prevStates;
+  prevStates = states;
+}
+
 // The code that will be run once at power on
 void setup()
 {
@@ -152,6 +237,7 @@ void loop()
   get_touch_analog_values(values);
   //print_array("value_", values, capacitive_touch_input_number);
   get_touch_states(values, states);
+ // gestureInterpreter(states);
   print_array("state_", states, capacitive_touch_input_number);
   delay(sampling_period);
 }
