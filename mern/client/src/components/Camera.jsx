@@ -44,13 +44,13 @@ const CameraComponent = () => {
     try {
       const base64Data = image.split(',')[1];
       console.log("Enviando imagen al servidor...");
-      
+
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           files: base64Data
         }),
       });
@@ -64,10 +64,10 @@ const CameraComponent = () => {
 
       if (result.success && result.detections) {
         // Filtrar detecciones por score
-        const filteredDetections = Array.isArray(result.detections) 
+        const filteredDetections = Array.isArray(result.detections)
           ? result.detections.filter(detection => detection.score >= SCORE_THRESHOLD)
           : [];
-        
+
         console.log("Detecciones filtradas (>70%):", filteredDetections);
         setDetections(filteredDetections);
         setProcessedImage(result.processedImage);
@@ -99,10 +99,23 @@ const CameraComponent = () => {
 
   const connectBluetooth = async () => {
     try {
+      if (!navigator.bluetooth) {
+        alert('Tu navegador no soporta Bluetooth. Por favor, usa Chrome, Edge o una versión reciente de un navegador compatible.');
+        return;
+      }
+
+      if (isBluetoothConnected) {
+        bluetoothService.disconnect();
+        setIsBluetoothConnected(false);
+        return;
+      }
+
       await bluetoothService.connect();
       setIsBluetoothConnected(true);
     } catch (error) {
       console.error('Error al conectar Bluetooth:', error);
+      alert(`Error de conexión Bluetooth: ${error.message}`);
+      setIsBluetoothConnected(false);
     }
   };
 
@@ -119,7 +132,7 @@ const CameraComponent = () => {
     if (imageRef.current) {
       const newScale = calculateScale(imageRef.current);
       setScale({ x: newScale, y: newScale });
-      
+
       // Añadir este log para depurar dimensiones
       console.log('Image dimensions:', {
         natural: {
@@ -190,29 +203,39 @@ const CameraComponent = () => {
     <div>
       <video ref={videoRef} style={{ width: "100%" }}></video>
       <button onClick={startCamera} className="custom-btn btn-1">Activar Cámara</button>
-      <button 
-        onClick={handleCaptureTrigger} 
+      <button
+        onClick={handleCaptureTrigger}
         className="custom-btn btn-1"
       >
         {isCapturing ? "Detener Captura" : "Iniciar Captura"}
       </button>
-      <button 
+      <button
         onClick={connectBluetooth}
         className={`custom-btn btn-1 ${isBluetoothConnected ? 'connected' : ''}`}
       >
         {isBluetoothConnected ? "BT Conectado" : "Conectar BT"}
       </button>
+      <button
+        onClick={() => console.log('Estado BT:', {
+          available: navigator.bluetooth ? 'Sí' : 'No',
+          connected: bluetoothService.isConnected(),
+          device: bluetoothService.device
+        })}
+        className="custom-btn btn-1"
+      >
+        Debug BT
+      </button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-      
+
       <div className="images-container">
         {imageData && (
           <div className="image-box" ref={containerRef}>
             <h3>Imagen con Detecciones:</h3>
             <div style={{ position: 'relative', width: '100%' }}>
-              <img 
+              <img
                 ref={imageRef}
-                src={imageData} 
-                alt="captured" 
+                src={imageData}
+                alt="captured"
                 style={{ width: '100%', display: 'block' }}
                 onLoad={updateDetectionBoxes}
               />
@@ -248,7 +271,7 @@ const CameraComponent = () => {
                         onMouseLeave={() => handleDetectionHover(null)}
                       >
                         {detection.label}
-                        <div 
+                        <div
                           className="confidence-bar"
                           style={{ width: `${detection.score * 100}%` }}
                         />
@@ -272,7 +295,7 @@ const CameraComponent = () => {
                 <br />
                 Confianza: {(detection.score * 100).toFixed(1)}%
                 <br />
-                Posición: ({detection.box.xmin}, {detection.box.ymin}) - 
+                Posición: ({detection.box.xmin}, {detection.box.ymin}) -
                 ({detection.box.xmax}, {detection.box.ymax})
               </li>
             ))}

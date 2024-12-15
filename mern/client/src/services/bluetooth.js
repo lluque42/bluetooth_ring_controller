@@ -5,26 +5,47 @@ class BluetoothService {
     this.subscribers = new Set();
   }
 
+  isWebBluetoothAvailable() {
+    if (!navigator.bluetooth) {
+      console.error('Web Bluetooth API no está disponible en este navegador');
+      return false;
+    }
+    return true;
+  }
+
   async connect() {
+    if (!this.isWebBluetoothAvailable()) {
+      throw new Error('Bluetooth no disponible en este navegador');
+    }
+
     try {
+      console.log('Solicitando dispositivo Bluetooth...');
       this.device = await navigator.bluetooth.requestDevice({
+        // Acepta cualquier dispositivo que anuncie el servicio que buscamos
         filters: [
-          { namePrefix: 'Filigring' } // Ajusta según el nombre de tu dispositivo
+          { services: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b'] },
+          { namePrefix: 'Filigrind' }
         ],
-        optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b'] // UUID de tu servicio ESP32
+        optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
       });
 
+      console.log('Conectando al dispositivo...');
       const server = await this.device.gatt.connect();
+
+      console.log('Obteniendo servicio...');
       const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+
+      console.log('Obteniendo característica...');
       this.characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
 
       await this.characteristic.startNotifications();
       this.characteristic.addEventListener('characteristicvaluechanged', this.handleValueChange.bind(this));
 
       console.log('Bluetooth conectado exitosamente');
+      return true;
     } catch (error) {
-      console.error('Error conectando Bluetooth:', error);
-      throw error;
+      console.error('Error detallado en la conexión Bluetooth:', error);
+      throw new Error(`Error conectando Bluetooth: ${error.message}`);
     }
   }
 
@@ -41,7 +62,14 @@ class BluetoothService {
   disconnect() {
     if (this.device && this.device.gatt.connected) {
       this.device.gatt.disconnect();
+      console.log('Dispositivo Bluetooth desconectado');
     }
+    this.device = null;
+    this.characteristic = null;
+  }
+
+  isConnected() {
+    return this.device && this.device.gatt.connected;
   }
 }
 
