@@ -70,6 +70,9 @@ const int sampling_period = 200;
 const int baseline_samples = 1000;
 
 long    baseline[] = {0,0,0,0,0,0,0,0};
+
+//
+const int buttonPin = 18;
 /*
 From the Lafvin pdf:
   T0 (GPIO 4)
@@ -83,6 +86,129 @@ From the Lafvin pdf:
   T8 (GPIO 33)
   T9 (GPIO 32)
 */
+
+// The code that will be run once at power on
+void setup()
+{
+  pinMode(buttonPin, INPUT);
+  /*
+  BLEDevice::init("ESP32");
+  BLEServer *pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+  
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+  pCharacteristic = pService->createCharacteristic(
+                     CHARACTERISTIC_UUID,
+                     BLECharacteristic::PROPERTY_READ |
+                     BLECharacteristic::PROPERTY_WRITE |
+                     BLECharacteristic::PROPERTY_NOTIFY
+                   );
+  pCharacteristic->addDescriptor(new BLE2902());
+  pService->start();
+  
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->start();
+  //BT end
+  */
+
+  // Serial communication speed
+  Serial.begin(serial_speed);
+  delay(1000);
+  // Initialize bluetooth connection using this device name
+  init_bt("Filigring");
+  calc_baseline(baseline);
+  Serial.println("Ring on line!!!");
+}
+
+// The code that will be run repeatedly
+void loop()
+{
+  int i;
+  int states[capacitive_touch_input_number];
+  int values[capacitive_touch_input_number];
+  int buttonState = digitalRead(buttonPin);
+  //Serial.println(buttonState);
+  //return;
+
+  get_touch_analog_values(values);
+  //print_array("value_", values, capacitive_touch_input_number);
+  get_touch_states(values, states);
+
+
+  //Serial.println("ERROR! Bluetooth unavailable");
+  /*
+  send_char_bt('t', 5000);
+  send_char_bt('v', 5000);
+  ...
+  */
+  //send_test_gestures_bt(5000);
+
+  
+  // To enable/disable the sending of gestures
+  if (buttonState == HIGH)
+  {
+    print_array("state_", states, capacitive_touch_input_number);
+    
+  }
+  else
+  {
+
+
+    // The other end must send something after stablishing the connection with the Filigring
+    // for the SerialBT.available() function to start returning true!!!! 
+    while (!SerialBT.available())
+    {
+      Serial.println("Waiting for a Bluetooth connection... The other end must send something after succesfully pairing and connecting with the Filigring");
+      delay(3000);
+    }
+
+    i = 0;
+    int pressed = 0;
+    int pressed_count = 0;
+
+    while (i < 8)
+    {
+      if (pressed == 0 && states[i] == 1)
+      {
+        pressed = 1;
+        send_custom_gestures_bt("tvvv^^vvvccdc^^vv", 500);
+        break ;
+      }
+      i++;
+    }
+    if (pressed == 1)
+    {
+      pressed_count = 0;
+      int j = 0;
+      while (j < 8)
+      {
+        pressed_count += states[i];
+        j++;
+      }
+      if (pressed_count == 0)
+      {
+        pressed = 0;
+      }
+    }
+    
+
+  /*
+    // BT code begins
+    if (deviceConnected) {
+      // Cuando quieras enviar una señal de captura
+      uint8_t value = 1;
+      pCharacteristic->setValue(&value, 1);
+      pCharacteristic->notify();
+      delay(1000); // Ajusta según necesites
+    }
+    // BT code ends
+  */
+  // gestureInterpreter(states);
+    
+  }
+  delay(sampling_period);
+}
 
 // Averages the values for the capacitive touch GPIOs 
 // to obtain a baseline
@@ -251,110 +377,7 @@ void  gestureInterpreter(int *states) {
   prevStates = states;
 }
 
-// The code that will be run once at power on
-void setup()
-{
-  
-  /*
-  BLEDevice::init("ESP32");
-  BLEServer *pServer = BLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
-  
-  BLEService *pService = pServer->createService(SERVICE_UUID);
-  pCharacteristic = pService->createCharacteristic(
-                     CHARACTERISTIC_UUID,
-                     BLECharacteristic::PROPERTY_READ |
-                     BLECharacteristic::PROPERTY_WRITE |
-                     BLECharacteristic::PROPERTY_NOTIFY
-                   );
-  pCharacteristic->addDescriptor(new BLE2902());
-  pService->start();
-  
-  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-  pAdvertising->addServiceUUID(SERVICE_UUID);
-  pAdvertising->start();
-  //BT end
-  */
 
-  // Serial communication speed
-  Serial.begin(serial_speed);
-  delay(1000);
-  // Initialize bluetooth connection using this device name
-  init_bt("Filigring");
-  calc_baseline(baseline);
-  Serial.println("Ring on line!!!");
-}
-
-// The code that will be run repeatedly
-void loop()
-{
-  int i;
-  int states[capacitive_touch_input_number];
-  int values[capacitive_touch_input_number];
-
-  get_touch_analog_values(values);
-  //print_array("value_", values, capacitive_touch_input_number);
-  get_touch_states(values, states);
-
-  // The other end must send something after stablishing the connection with the Filigring
-  // for the SerialBT.available() function to start returning true!!!! 
-  while (!SerialBT.available())
-  {
-    Serial.println("Waiting for a Bluetooth connection... The other end must send something after succesfully pairing and connecting with the Filigring");
-    delay(3000);
-  }
-  //Serial.println("ERROR! Bluetooth unavailable");
-  /*
-  send_char_bt('t', 5000);
-  send_char_bt('v', 5000);
-  ...
-  */
-  //send_test_gestures_bt(5000);
-  i = 0;
-  int pressed = 0;
-  int pressed_count = 0;
-
-  while (i < 8)
-  {
-    if (pressed == 0 && states[i] == 1)
-    {
-      pressed = 1;
-      send_custom_gestures_bt("tvvv^^vvvccdc^^vv", 500);
-      break ;
-    }
-    i++;
-  }
-  if (pressed == 1)
-  {
-    pressed_count = 0;
-    int j = 0;
-    while (j < 8)
-    {
-      pressed_count += states[i];
-      j++;
-    }
-    if (pressed_count == 0)
-    {
-      pressed = 0;
-    }
-  }
-  
-
-/*
-  // BT code begins
-   if (deviceConnected) {
-    // Cuando quieras enviar una señal de captura
-    uint8_t value = 1;
-    pCharacteristic->setValue(&value, 1);
-    pCharacteristic->notify();
-    delay(1000); // Ajusta según necesites
-  }
-  // BT code ends
-*/
- // gestureInterpreter(states);
-  print_array("state_", states, capacitive_touch_input_number);
-  delay(sampling_period);
-}
 
 // Initializes bluetooth connection using the argument as the device name
 void  init_bt(char *device_name)
