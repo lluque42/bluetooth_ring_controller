@@ -9,7 +9,7 @@ class BluetoothService {
     try {
       this.device = await navigator.bluetooth.requestDevice({
         filters: [
-          { namePrefix: 'ESP32' } // Ajusta según el nombre de tu dispositivo
+          { namePrefix: 'Filigring' } // Ajusta según el nombre de tu dispositivo
         ],
         optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b'] // UUID de tu servicio ESP32
       });
